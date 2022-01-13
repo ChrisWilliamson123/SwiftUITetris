@@ -24,6 +24,7 @@
 		83680D84278F89400045B819 /* SBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83680D83278F89400045B819 /* SBlock.swift */; };
 		83680D86278F8A820045B819 /* ZBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83680D85278F8A820045B819 /* ZBlock.swift */; };
 		83680D88278F8AC50045B819 /* TBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83680D87278F8AC50045B819 /* TBlock.swift */; };
+		83DF6EC12790B55500DBD8A1 /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83DF6EC02790B55500DBD8A1 /* Board.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,6 +65,7 @@
 		83680D83278F89400045B819 /* SBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SBlock.swift; sourceTree = "<group>"; };
 		83680D85278F8A820045B819 /* ZBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZBlock.swift; sourceTree = "<group>"; };
 		83680D87278F8AC50045B819 /* TBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TBlock.swift; sourceTree = "<group>"; };
+		83DF6EC02790B55500DBD8A1 /* Board.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Board.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -152,6 +154,7 @@
 		83680D70278F7B900045B819 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				83DF6EBF2790B53200DBD8A1 /* Board */,
 				83680D71278F7BA00045B819 /* Blocks */,
 			);
 			path = Views;
@@ -179,6 +182,14 @@
 				83680D77278F84030045B819 /* UIColor+Extensions.swift */,
 			);
 			path = Extensions;
+			sourceTree = "<group>";
+		};
+		83DF6EBF2790B53200DBD8A1 /* Board */ = {
+			isa = PBXGroup;
+			children = (
+				83DF6EC02790B55500DBD8A1 /* Board.swift */,
+			);
+			path = Board;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -317,6 +328,7 @@
 				83680D7C278F85C80045B819 /* IBlock.swift in Sources */,
 				83680D75278F7D8E0045B819 /* IsoscelesTrapezium.swift in Sources */,
 				83680D84278F89400045B819 /* SBlock.swift in Sources */,
+				83DF6EC12790B55500DBD8A1 /* Board.swift in Sources */,
 				83680D88278F8AC50045B819 /* TBlock.swift in Sources */,
 				83680D7E278F879E0045B819 /* JBlock.swift in Sources */,
 				83680D86278F8A820045B819 /* ZBlock.swift in Sources */,

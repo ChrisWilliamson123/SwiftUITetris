@@ -9,6 +9,7 @@ struct Cube: View {
     static let green: Cube = Cube(colour: UIColor(red: 110/255, green: 234/255, blue: 71/255, alpha: 1))
     static let purple: Cube = Cube(colour: UIColor(red: 145/255, green: 44/255, blue: 232/255, alpha: 1))
     static let red: Cube = Cube(colour: UIColor(red: 221/255, green: 47/255, blue: 33/255, alpha: 1))
+    static let grey: Cube = Cube(colour: UIColor(red: 120/255, green: 120/255, blue: 120/255, alpha: 1))
     
     let colour: UIColor
 
@@ -75,13 +76,14 @@ struct Cube: View {
 struct Cube_Previews: PreviewProvider {
     static var previews: some View {
         ScrollView {
-            Cube.lightBlue
-            Cube.darkBlue
-            Cube.orange
-            Cube.yellow
-            Cube.green
-            Cube.purple
-            Cube.red
+            Cube.lightBlue.frame(width: 50, height: 50)
+            Cube.darkBlue.frame(width: 50, height: 50)
+            Cube.orange.frame(width: 50, height: 50)
+            Cube.yellow.frame(width: 50, height: 50)
+            Cube.green.frame(width: 50, height: 50)
+            Cube.purple.frame(width: 50, height: 50)
+            Cube.red.frame(width: 50, height: 50)
+            Cube.grey.frame(width: 50, height: 50)
         }
     }
 }
