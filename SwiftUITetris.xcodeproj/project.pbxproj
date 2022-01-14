@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8321E46C27920D2F0052DA16 /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8321E46B27920D2F0052DA16 /* Board.swift */; };
 		83680D47278F7B6A0045B819 /* SwiftUITetrisApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83680D46278F7B6A0045B819 /* SwiftUITetrisApp.swift */; };
 		83680D49278F7B6A0045B819 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83680D48278F7B6A0045B819 /* ContentView.swift */; };
 		83680D4B278F7B6E0045B819 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 83680D4A278F7B6E0045B819 /* Assets.xcassets */; };
@@ -24,7 +25,9 @@
 		83680D84278F89400045B819 /* SBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83680D83278F89400045B819 /* SBlock.swift */; };
 		83680D86278F8A820045B819 /* ZBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83680D85278F8A820045B819 /* ZBlock.swift */; };
 		83680D88278F8AC50045B819 /* TBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83680D87278F8AC50045B819 /* TBlock.swift */; };
-		83DF6EC12790B55500DBD8A1 /* Board.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83DF6EC02790B55500DBD8A1 /* Board.swift */; };
+		83B1568027920E01000AED5E /* Coordinate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83B1567F27920E01000AED5E /* Coordinate.swift */; };
+		83B1568227920E39000AED5E /* Block.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83B1568127920E39000AED5E /* Block.swift */; };
+		83DF6EC12790B55500DBD8A1 /* BoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83DF6EC02790B55500DBD8A1 /* BoardView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,6 +48,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		8321E46B27920D2F0052DA16 /* Board.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Board.swift; sourceTree = "<group>"; };
 		83680D43278F7B6A0045B819 /* SwiftUITetris.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftUITetris.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		83680D46278F7B6A0045B819 /* SwiftUITetrisApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUITetrisApp.swift; sourceTree = "<group>"; };
 		83680D48278F7B6A0045B819 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -65,7 +69,9 @@
 		83680D83278F89400045B819 /* SBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SBlock.swift; sourceTree = "<group>"; };
 		83680D85278F8A820045B819 /* ZBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZBlock.swift; sourceTree = "<group>"; };
 		83680D87278F8AC50045B819 /* TBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TBlock.swift; sourceTree = "<group>"; };
-		83DF6EC02790B55500DBD8A1 /* Board.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Board.swift; sourceTree = "<group>"; };
+		83B1567F27920E01000AED5E /* Coordinate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinate.swift; sourceTree = "<group>"; };
+		83B1568127920E39000AED5E /* Block.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Block.swift; sourceTree = "<group>"; };
+		83DF6EC02790B55500DBD8A1 /* BoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -93,6 +99,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8321E46A27920D250052DA16 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				8321E46B27920D2F0052DA16 /* Board.swift */,
+				83B1567F27920E01000AED5E /* Coordinate.swift */,
+				83B1568127920E39000AED5E /* Block.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
 		83680D3A278F7B6A0045B819 = {
 			isa = PBXGroup;
 			children = (
@@ -116,6 +132,7 @@
 		83680D45278F7B6A0045B819 /* SwiftUITetris */ = {
 			isa = PBXGroup;
 			children = (
+				8321E46A27920D250052DA16 /* Models */,
 				83680D76278F83F20045B819 /* Extensions */,
 				83680D70278F7B900045B819 /* Views */,
 				83680D46278F7B6A0045B819 /* SwiftUITetrisApp.swift */,
@@ -187,7 +204,7 @@
 		83DF6EBF2790B53200DBD8A1 /* Board */ = {
 			isa = PBXGroup;
 			children = (
-				83DF6EC02790B55500DBD8A1 /* Board.swift */,
+				83DF6EC02790B55500DBD8A1 /* BoardView.swift */,
 			);
 			path = Board;
 			sourceTree = "<group>";
@@ -323,18 +340,21 @@
 			buildActionMask = 2147483647;
 			files = (
 				83680D49278F7B6A0045B819 /* ContentView.swift in Sources */,
+				83B1568227920E39000AED5E /* Block.swift in Sources */,
 				83680D78278F84030045B819 /* UIColor+Extensions.swift in Sources */,
 				83680D47278F7B6A0045B819 /* SwiftUITetrisApp.swift in Sources */,
 				83680D7C278F85C80045B819 /* IBlock.swift in Sources */,
+				8321E46C27920D2F0052DA16 /* Board.swift in Sources */,
 				83680D75278F7D8E0045B819 /* IsoscelesTrapezium.swift in Sources */,
 				83680D84278F89400045B819 /* SBlock.swift in Sources */,
-				83DF6EC12790B55500DBD8A1 /* Board.swift in Sources */,
+				83DF6EC12790B55500DBD8A1 /* BoardView.swift in Sources */,
 				83680D88278F8AC50045B819 /* TBlock.swift in Sources */,
 				83680D7E278F879E0045B819 /* JBlock.swift in Sources */,
 				83680D86278F8A820045B819 /* ZBlock.swift in Sources */,
 				83680D80278F88920045B819 /* LBlock.swift in Sources */,
 				83680D82278F88E40045B819 /* OBlock.swift in Sources */,
 				83680D73278F7C030045B819 /* Cube.swift in Sources */,
+				83B1568027920E01000AED5E /* Coordinate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
