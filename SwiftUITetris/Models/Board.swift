@@ -49,7 +49,8 @@ extension Board {
         
         var newBlocks = inPlayBlocks.filter({ $0 != latestPiece })
         let newBlock = InPlayBlock(block: latestPiece.block,
-                                   coords: latestPiece.coords.reduce(into: [], { $0.insert(.init($1.x + direction.adjustment.x, $1.y + direction.adjustment.y))}))
+                                   coords: latestPiece.coords.reduce(into: [], { $0.insert(.init($1.x + direction.adjustment.x, $1.y + direction.adjustment.y))}),
+                                   boundingBox: latestPiece.boundingBox.map({ .init($0.x + direction.adjustment.x, $0.y + direction.adjustment.y) }))
         newBlocks.append(newBlock)
         
         return Board(inPlayBlocks: newBlocks)
@@ -57,6 +58,21 @@ extension Board {
     
     private func coordIsWithinBoard(coord: Coordinate) -> Bool {
         coord.x >= 0 && coord.x < data[0].count && coord.y >= 0 && coord.y < data.count
+    }
+}
+
+// MARK: - Rotating
+extension Board {
+    func rotatingLatestPieceRight() -> Board {
+        guard let latestPiece = latestPiece else { return self }
+        let rotated = latestPiece.rotatedRight()
+        return Board(inPlayBlocks: inPlayBlocks[0..<inPlayBlocks.count - 1] + [rotated])
+    }
+    
+    func rotatingLatestPieceLeft() -> Board {
+        guard let latestPiece = latestPiece else { return self }
+        let rotated = latestPiece.rotatedLeft()
+        return Board(inPlayBlocks: inPlayBlocks[0..<inPlayBlocks.count - 1] + [rotated])
     }
 }
 
@@ -77,4 +93,77 @@ enum MovementDirection {
 struct InPlayBlock: Hashable {
     let block: Block
     let coords: Set<Coordinate>
+    let boundingBox: [Coordinate]
+    
+    func rotatedRight() -> InPlayBlock {
+        if block == .oBlock { return self }
+        if block == .iBlock {
+            let transformations = [
+                Set([Coordinate(0, 1), Coordinate(1, 1), Coordinate(2, 1), Coordinate(3, 1)]),
+                Set([Coordinate(2, 0), Coordinate(2, 1), Coordinate(2, 2), Coordinate(2, 3)]),
+                Set([Coordinate(0, 2), Coordinate(1, 2), Coordinate(2, 2), Coordinate(3, 2)]),
+                Set([Coordinate(1, 0), Coordinate(1, 1), Coordinate(1, 2), Coordinate(1, 3)])
+            ]
+            let translated = Set(coords.map({ Coordinate($0.x - boundingBox[0].x, $0.y - boundingBox[0].y) }))
+            print(translated)
+            let index = transformations.firstIndex(where: { $0 == translated })!
+            let rotated = Array(transformations.rotatingLeft(positions: 1))
+            let actual = rotated[index]
+            return .init(block: block,
+                         coords: actual.reduce(into: [], { $0.insert(Coordinate(boundingBox[0].x + $1.x, boundingBox[0].y + $1.y)) }),
+                         boundingBox: boundingBox)
+        }
+        
+        let midPoint = Coordinate(boundingBox[0].x+1, boundingBox[0].y+1)
+        return .init(block: block, coords: coords.reduce(into: [], { $0.insert($1.rotatingAround(origin: midPoint, by: 90)) }), boundingBox: boundingBox)
+    }
+    
+    func rotatedLeft() -> InPlayBlock {
+        if block == .oBlock { return self }
+        if block == .iBlock {
+            let transformations = [
+                Set([Coordinate(0, 1), Coordinate(1, 1), Coordinate(2, 1), Coordinate(3, 1)]),
+                Set([Coordinate(2, 0), Coordinate(2, 1), Coordinate(2, 2), Coordinate(2, 3)]),
+                Set([Coordinate(0, 2), Coordinate(1, 2), Coordinate(2, 2), Coordinate(3, 2)]),
+                Set([Coordinate(1, 0), Coordinate(1, 1), Coordinate(1, 2), Coordinate(1, 3)])
+            ]
+            let translated = Set(coords.map({ Coordinate($0.x - boundingBox[0].x, $0.y - boundingBox[0].y) }))
+            print(translated)
+            let index = transformations.firstIndex(where: { $0 == translated })!
+            let rotated = Array(transformations.rotatingRight(positions: 1))
+            let actual = rotated[index]
+            return .init(block: block,
+                         coords: actual.reduce(into: [], { $0.insert(Coordinate(boundingBox[0].x + $1.x, boundingBox[0].y + $1.y)) }),
+                         boundingBox: boundingBox)
+        }
+        
+        let midPoint = Coordinate(boundingBox[0].x+1, boundingBox[0].y+1)
+        return .init(block: block, coords: coords.reduce(into: [], { $0.insert($1.rotatingAround(origin: midPoint, by: -90)) }), boundingBox: boundingBox)
+    }
+}
+
+extension RangeReplaceableCollection {
+    func rotatingLeft(positions: Int) -> SubSequence {
+        let index = self.index(startIndex, offsetBy: positions, limitedBy: endIndex) ?? endIndex
+        return self[index...] + self[..<index]
+    }
+    mutating func rotateLeft(positions: Int) {
+        let index = self.index(startIndex, offsetBy: positions, limitedBy: endIndex) ?? endIndex
+        let slice = self[..<index]
+        removeSubrange(..<index)
+        insert(contentsOf: slice, at: endIndex)
+    }
+}
+
+extension RangeReplaceableCollection {
+    func rotatingRight(positions: Int) -> SubSequence {
+        let index = self.index(endIndex, offsetBy: -positions, limitedBy: startIndex) ?? startIndex
+        return self[index...] + self[..<index]
+    }
+    mutating func rotateRight(positions: Int) {
+        let index = self.index(endIndex, offsetBy: -positions, limitedBy: startIndex) ?? startIndex
+        let slice = self[index...]
+        removeSubrange(index...)
+        insert(contentsOf: slice, at: startIndex)
+    }
 }

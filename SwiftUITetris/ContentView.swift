@@ -24,7 +24,12 @@ struct ContentView: View {
                 BoardView(board: board)
                     .padding()
                     .onReceive(timer) { _ in assignNextState() }
-                HStack(spacing: 100) {
+                HStack(spacing: 32) {
+                    Button {
+                        board = board.rotatingLatestPieceLeft()
+                    } label: {
+                        Image(systemName: "arrow.counterclockwise.circle.fill").resizable().frame(width: 44, height: 44)
+                    }
                     Button {
                         board = board.movingLatestPiece(direction: .left)
                     } label: {
@@ -34,6 +39,11 @@ struct ContentView: View {
                         board = board.movingLatestPiece(direction: .right)
                     } label: {
                         Image(systemName: "arrow.forward.circle.fill").resizable().frame(width: 44, height: 44)
+                    }
+                    Button {
+                        board = board.rotatingLatestPieceRight()
+                    } label: {
+                        Image(systemName: "arrow.clockwise.circle.fill").resizable().frame(width: 44, height: 44)
                     }
                 }
             }
@@ -47,13 +57,18 @@ struct ContentView: View {
         
         // Spawn a new piece if nothing moved
         if newBoard == board {
-            let block = Block.allCases.shuffled().first!
+//            let block = Block.allCases.shuffled().first!
+            let block = Block.iBlock
             // We need to check if we can spawn the block
             let allBlocks = newBoard.populatedCoords
             for coord in block.spawnCoordinates {
                 if allBlocks.contains(coord) { gameIsOver = true; return }
             }
-            newBoard = Board(inPlayBlocks: newBoard.inPlayBlocks + [.init(block: block, coords: block.spawnCoordinates)])
+            
+            let newBlock = InPlayBlock(block: block,
+                                       coords: block.spawnCoordinates,
+                                       boundingBox: block.initialBoundingBox)
+            newBoard = Board(inPlayBlocks: newBoard.inPlayBlocks + [newBlock])
         }
         
         board = newBoard

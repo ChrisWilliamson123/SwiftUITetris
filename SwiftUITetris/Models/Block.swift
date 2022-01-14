@@ -30,6 +30,18 @@ enum Block: CaseIterable {
         case .jBlock: return [.init(3, 0), .init(3, 1), .init(4, 1), .init(5, 1)]
         }
     }
+    
+    var initialBoundingBox: [Coordinate] {
+        switch self {
+        case .tBlock: return [.init(3, 0), .init(5, 0), .init(3, 2), .init(5, 2)]
+        case .iBlock: return [.init(3, 0), .init(6, 0), .init(3, 3), .init(6, 3)]
+        case .zBlock: return [.init(3, 0), .init(5, 0), .init(3, 2), .init(5, 2)]
+        case .sBlock: return [.init(3, 0), .init(5, 0), .init(3, 2), .init(5, 2)]
+        case .oBlock: return [.init(4, 0), .init(5, 0), .init(4, 1), .init(5, 1)]
+        case .lBlock: return [.init(3, 0), .init(5, 0), .init(3, 2), .init(5, 2)]
+        case .jBlock: return [.init(3, 0), .init(5, 0), .init(3, 2), .init(5, 2)]
+        }
+    }
 }
 
 enum BlockColour {
