@@ -77,7 +77,9 @@ struct ContentView: View {
             let newBlock = InPlayBlock(block: block,
                                        coords: block.spawnCoordinates,
                                        boundingBox: block.initialBoundingBox)
-            newBoard = Board(inPlayBlocks: newBoard.inPlayBlocks + [newBlock])
+            var newData = newBoard.data
+            newBlock.coords.forEach({ newData[$0.y][$0.x] = newBlock.block.colour })
+            newBoard = Board(data: newData, fallingPiece: newBlock)
         }
         
         board = newBoard

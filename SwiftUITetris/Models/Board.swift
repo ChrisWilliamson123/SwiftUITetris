@@ -1,9 +1,16 @@
 struct Board: Equatable {
     let data: [[BlockColour?]]
-    let inPlayBlocks: [InPlayBlock]
-    
-    var latestPiece: InPlayBlock? { inPlayBlocks.last }
-    var populatedCoords: Set<Coordinate> { inPlayBlocks.reduce(into: [], { $0.formUnion($1.coords) }) }
+    let fallingPiece: InPlayBlock?
+
+    var populatedCoords: Set<Coordinate> {
+        var result = Set<Coordinate>()
+        for y in 0..<data.count {
+            for x in 0..<data[y].count where data[y][x] != nil {
+                result.insert(Coordinate(x, y))
+            }
+        }
+        return result
+    }
     var fullLines: Set<Int> {
         (0..<data.count).reduce(into: [], {
             if data[$1].contains(nil) { return }
@@ -13,18 +20,9 @@ struct Board: Equatable {
     
     static let allNilData: [[BlockColour?]] = Array(repeating: Array(repeating: nil, count: 10), count: 20)
     
-    init(inPlayBlocks: [InPlayBlock] = []) {
-        self.inPlayBlocks = inPlayBlocks
-        
-        var data: [[BlockColour?]] = Self.allNilData
-        
-        for ipb in inPlayBlocks {
-            for c in ipb.coords {
-                data[c.y][c.x] = ipb.block.colour
-            }
-        }
-        
-        self.data = data
+    init(data: [[BlockColour?]]? = nil, fallingPiece: InPlayBlock? = nil) {
+        self.data = data ?? Self.allNilData
+        self.fallingPiece = fallingPiece
     }
     
     private func isSpaceEmpty(coord: Coordinate) -> Bool {
@@ -43,7 +41,7 @@ struct Board: Equatable {
 // MARK: - Movement
 extension Board {
     func movingLatestPiece(direction: MovementDirection) -> Board {
-        guard let latestPiece = latestPiece else { return self }
+        guard let latestPiece = fallingPiece else { return self }
 
         let neighbourCoords = getNeighbourCoords(of: latestPiece, direction: direction)
         
@@ -53,13 +51,11 @@ extension Board {
             }
         }
         
-        var newBlocks = inPlayBlocks.filter({ $0 != latestPiece })
         let newBlock = InPlayBlock(block: latestPiece.block,
                                    coords: latestPiece.coords.reduce(into: [], { $0.insert(.init($1.x + direction.adjustment.x, $1.y + direction.adjustment.y))}),
                                    boundingBox: latestPiece.boundingBox.map({ .init($0.x + direction.adjustment.x, $0.y + direction.adjustment.y) }))
-        newBlocks.append(newBlock)
-        
-        return Board(inPlayBlocks: newBlocks)
+
+        return self.replacing(latestPiece, with: newBlock)
     }
     
     private func coordIsWithinBoard(coord: Coordinate) -> Bool {
@@ -71,17 +67,27 @@ extension Board {
 extension Board {
     
     func rotatingLatestPiece(_ direction: MovementDirection) -> Board {
-        guard let latestPiece = latestPiece else { return self }
+        guard let latestPiece = fallingPiece else { return self }
         switch direction {
         case .left:
             let rotated = latestPiece.rotatedLeft()
-            return Board(inPlayBlocks: inPlayBlocks[0..<inPlayBlocks.count - 1] + [rotated])
+            return self.replacing(latestPiece, with: rotated)
         case .right:
             let rotated = latestPiece.rotatedRight()
-            return Board(inPlayBlocks: inPlayBlocks[0..<inPlayBlocks.count - 1] + [rotated])
+            return self.replacing(latestPiece, with: rotated)
         default:
             return self
         }
+    }
+}
+
+// MARK: - Data manipulation
+extension Board {
+    func replacing(_ oldPiece: InPlayBlock, with newPiece: InPlayBlock) -> Board {
+        var newData = data
+        oldPiece.coords.forEach({ newData[$0.y][$0.x] = nil })
+        newPiece.coords.forEach({ newData[$0.y][$0.x] = newPiece.block.colour })
+        return Board(data: newData, fallingPiece: newPiece)
     }
 }
 
