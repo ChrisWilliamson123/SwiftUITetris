@@ -11,12 +11,43 @@ struct Board: Equatable {
         }
         return result
     }
-    var fullLines: Set<Int> {
-        (0..<data.count).reduce(into: [], {
-            if data[$1].contains(nil) { return }
-            $0.insert($1)
-        })
+    
+//    static func == (lhs: Board, rhs: Board) -> Bool {
+//        lhs.data == rhs.data
+//    }
+    
+    var completeLineRanges: [ClosedRange<Int>] {
+        var ranges = [ClosedRange<Int>]()
+        var mainIndex = data.count - 1
+        while mainIndex >= 0 {
+            let lineData = data[mainIndex]
+            if lineData.contains(nil) { mainIndex -= 1; continue }
+            if mainIndex == 0 { ranges.append(0...0); mainIndex -= 1; continue }
+            
+            // Line is full so start building range
+            var endOfRangeIndex = mainIndex - 1
+            while endOfRangeIndex >= 0 {
+                let nextLineData = data[endOfRangeIndex]
+                if nextLineData.contains(nil) {
+                    // Range has ended
+                    ranges.append(endOfRangeIndex+1...mainIndex)
+                    break
+                }
+                // This line was full, so reduce end of range index
+                endOfRangeIndex -= 1
+            }
+            mainIndex = endOfRangeIndex
+        }
+        return ranges
     }
+    
+//    var fullLines: Set<Int> {
+//        stride(from: data.count-1, to: -1, by: -1).reduce(into: <#T##Result#>, <#T##updateAccumulatingResult: (inout Result, Int) throws -> ()##(inout Result, Int) throws -> ()##(_ partialResult: inout Result, Int) throws -> ()#>)
+//        (0..<data.count).reduce(into: [], {
+//            if data[$1].contains(nil) { return }
+//            $0.insert($1)
+//        })
+//    }
     
     static let allNilData: [[BlockColour?]] = Array(repeating: Array(repeating: nil, count: 10), count: 20)
     
