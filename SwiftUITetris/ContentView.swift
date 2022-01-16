@@ -11,6 +11,8 @@ struct ContentView: View {
     @State private var board: Board = Board()
     let timer = Timer.publish(every: 0.3, on: .main, in: .common).autoconnect()
     @State private var gameIsOver = false
+    @State private var score = 0
+    @State private var level = 1
     
     var body: some View {
         if gameIsOver {
@@ -20,36 +22,38 @@ struct ContentView: View {
                 board = Board()
             }
         } else {
-            VStack {
-                BoardView(board: board)
-                    .padding(EdgeInsets(top: 32, leading: 32, bottom: 32, trailing: 32))
-                    .onReceive(timer) { _ in assignNextState() }
-                HStack(spacing: 32) {
-                    Button {
-                        board = board.rotatingLatestPiece(.left)
-                    } label: {
-                        Image(systemName: "arrow.counterclockwise.circle.fill").resizable().frame(width: 44, height: 44)
-                    }
-                    Button {
-                        board = board.movingLatestPiece(direction: .left)
-                    } label: {
-                        Image(systemName: "arrow.backward.circle.fill").resizable().frame(width: 44, height: 44)
-                    }
-                    Button {
-                        board = board.movingLatestPiece(direction: .right)
-                    } label: {
-                        Image(systemName: "arrow.forward.circle.fill").resizable().frame(width: 44, height: 44)
-                    }
-                    Button {
-                        board = board.rotatingLatestPiece(.right)
-                    } label: {
-                        Image(systemName: "arrow.clockwise.circle.fill").resizable().frame(width: 44, height: 44)
+            GeometryReader { geometry in
+                VStack {
+                    Text("Score: \(score)").font(.largeTitle).padding()
+                    BoardView(board: board)
+                        .padding(EdgeInsets(top: 32, leading: 64, bottom: 32, trailing: 64))
+                        .onReceive(timer) { _ in assignNextState() }
+                    Spacer()
+                    HStack(spacing: 32) {
+                        Button {
+                            board = board.rotatingLatestPiece(.left)
+                        } label: {
+                            Image(systemName: "arrow.counterclockwise.circle.fill").resizable().frame(width: 44, height: 44)
+                        }
+                        Button {
+                            board = board.movingLatestPiece(direction: .left)
+                        } label: {
+                            Image(systemName: "arrow.backward.circle.fill").resizable().frame(width: 44, height: 44)
+                        }
+                        Button {
+                            board = board.movingLatestPiece(direction: .right)
+                        } label: {
+                            Image(systemName: "arrow.forward.circle.fill").resizable().frame(width: 44, height: 44)
+                        }
+                        Button {
+                            board = board.rotatingLatestPiece(.right)
+                        } label: {
+                            Image(systemName: "arrow.clockwise.circle.fill").resizable().frame(width: 44, height: 44)
+                        }
                     }
                 }
             }
-            
         }
-        
     }
     
     private func assignNextState() {
@@ -62,6 +66,7 @@ struct ContentView: View {
              2. Spawn a new block
              3. End the game
              */
+            var newScore = score
             newBoard = Board(data: newBoard.data, fallingPiece: nil)
             if !board.completeLineRanges.isEmpty {
                 var postLineRemovalData = newBoard.data
@@ -77,6 +82,15 @@ struct ContentView: View {
                         newData.insert(Array(repeating: nil, count: newBoard.data[0].count), at: 0)
                     }
                     postLineRemovalData = newData
+                    
+                    // Change score
+                    switch r.count {
+                    case 1: score += 100 * level
+                    case 2: score += 300 * level
+                    case 3: score += 500 * level
+                    case 4: score += 800 * level
+                    default: break
+                    }
                 }
                 newBoard = Board(data: postLineRemovalData, fallingPiece: newBoard.fallingPiece)
             }
