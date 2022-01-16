@@ -4,6 +4,12 @@ struct Board: Equatable {
     
     var latestPiece: InPlayBlock? { inPlayBlocks.last }
     var populatedCoords: Set<Coordinate> { inPlayBlocks.reduce(into: [], { $0.formUnion($1.coords) }) }
+    var fullLines: Set<Int> {
+        (0..<data.count).reduce(into: [], {
+            if data[$1].contains(nil) { return }
+            $0.insert($1)
+        })
+    }
     
     static let allNilData: [[BlockColour?]] = Array(repeating: Array(repeating: nil, count: 10), count: 20)
     
@@ -63,18 +69,30 @@ extension Board {
 
 // MARK: - Rotating
 extension Board {
-    func rotatingLatestPieceRight() -> Board {
-        guard let latestPiece = latestPiece else { return self }
-        let rotated = latestPiece.rotatedRight()
-        return Board(inPlayBlocks: inPlayBlocks[0..<inPlayBlocks.count - 1] + [rotated])
-    }
     
-    func rotatingLatestPieceLeft() -> Board {
+    func rotatingLatestPiece(_ direction: MovementDirection) -> Board {
         guard let latestPiece = latestPiece else { return self }
-        let rotated = latestPiece.rotatedLeft()
-        return Board(inPlayBlocks: inPlayBlocks[0..<inPlayBlocks.count - 1] + [rotated])
+        switch direction {
+        case .left:
+            let rotated = latestPiece.rotatedLeft()
+            return Board(inPlayBlocks: inPlayBlocks[0..<inPlayBlocks.count - 1] + [rotated])
+        case .right:
+            let rotated = latestPiece.rotatedRight()
+            return Board(inPlayBlocks: inPlayBlocks[0..<inPlayBlocks.count - 1] + [rotated])
+        default:
+            return self
+        }
     }
 }
+
+// MARK: - Line Clearing
+//extension Board {
+//    func deletingLines(_ lines: Set<Int>) -> Board {
+//        for l in lines {
+//
+//        }
+//    }
+//}
 
 enum MovementDirection {
     case left

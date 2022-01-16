@@ -26,7 +26,7 @@ struct ContentView: View {
                     .onReceive(timer) { _ in assignNextState() }
                 HStack(spacing: 32) {
                     Button {
-                        board = board.rotatingLatestPieceLeft()
+                        board = board.rotatingLatestPiece(.left)
                     } label: {
                         Image(systemName: "arrow.counterclockwise.circle.fill").resizable().frame(width: 44, height: 44)
                     }
@@ -41,7 +41,7 @@ struct ContentView: View {
                         Image(systemName: "arrow.forward.circle.fill").resizable().frame(width: 44, height: 44)
                     }
                     Button {
-                        board = board.rotatingLatestPieceRight()
+                        board = board.rotatingLatestPiece(.right)
                     } label: {
                         Image(systemName: "arrow.clockwise.circle.fill").resizable().frame(width: 44, height: 44)
                     }
@@ -55,10 +55,19 @@ struct ContentView: View {
     private func assignNextState() {
         var newBoard = board.movingLatestPiece(direction: .down)
         
-        // Spawn a new piece if nothing moved
         if newBoard == board {
-//            let block = Block.allCases.shuffled().first!
-            let block = Block.iBlock
+            /*
+             Need to split out some logic here, we have:
+             1. Clear line(s)
+             2. Spawn a new block
+             3. End the game
+             */
+            if !board.fullLines.isEmpty {
+                // Remove the line and move everything above down one
+                
+            }
+            
+            let block = Block.allCases.shuffled().first!
             // We need to check if we can spawn the block
             let allBlocks = newBoard.populatedCoords
             for coord in block.spawnCoordinates {
