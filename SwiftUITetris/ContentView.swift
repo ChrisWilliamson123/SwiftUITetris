@@ -9,10 +9,12 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var board: Board = Board()
-    let timer = Timer.publish(every: 0.3, on: .main, in: .common).autoconnect()
+    let timer = Timer.publish(every: 0.0167, on: .main, in: .common).autoconnect()
     @State private var gameIsOver = false
     @State private var score = 0
     @State private var level = 1
+    @State private var lastMoveTime: Double = 0
+    @State private var time: Double = 0
     
     var body: some View {
         if gameIsOver {
@@ -27,7 +29,10 @@ struct ContentView: View {
                     Text("Score: \(score)").font(.largeTitle).padding()
                     BoardView(board: board)
                         .padding(EdgeInsets(top: 32, leading: 64, bottom: 32, trailing: 64))
-                        .onReceive(timer) { _ in assignNextState() }
+                        .onReceive(timer) { _ in
+                            time += 0.0167
+                            tick()
+                        }
                     Spacer()
                     HStack(spacing: 32) {
                         Button {
@@ -56,62 +61,74 @@ struct ContentView: View {
         }
     }
     
-    private func assignNextState() {
-        var newBoard = board.movingLatestPiece(direction: .down)
-        
-        if newBoard == board {
-            /*
-             Need to split out some logic here, we have:
-             1. Clear line(s)
-             2. Spawn a new block
-             3. End the game
-             */
-            var newScore = score
-            newBoard = Board(data: newBoard.data, fallingPiece: nil)
-            if !board.completeLineRanges.isEmpty {
-                var postLineRemovalData = newBoard.data
-                // Go through the ranges and remove the lines
-                for r in board.completeLineRanges {
-                    for y in r {
-                        postLineRemovalData[y] = Array(repeating: nil, count: postLineRemovalData[y].count)
-                    }
-                    // Now need to move all lines before range down
-                    // Can first build up an array of data which should fill the gap AND above
-                    var newData = Array(postLineRemovalData[0..<r.lowerBound])
-                    while newData.count != r.upperBound+1 {
-                        newData.insert(Array(repeating: nil, count: newBoard.data[0].count), at: 0)
-                    }
-                    postLineRemovalData = newData
-                    
-                    // Change score
-                    switch r.count {
-                    case 1: score += 100 * level
-                    case 2: score += 300 * level
-                    case 3: score += 500 * level
-                    case 4: score += 800 * level
-                    default: break
-                    }
-                }
-                newBoard = Board(data: postLineRemovalData, fallingPiece: newBoard.fallingPiece)
-            }
-            
-            let block = Block.allCases.shuffled().first!
-            // We need to check if we can spawn the block
-            let allBlocks = newBoard.populatedCoords
-            for coord in block.spawnCoordinates {
-                if allBlocks.contains(coord) { gameIsOver = true; return }
-            }
-            
-            let newBlock = InPlayBlock(block: block,
-                                       coords: block.spawnCoordinates,
-                                       boundingBox: block.initialBoundingBox)
-            var newData = newBoard.data
-            newBlock.coords.forEach({ newData[$0.y][$0.x] = newBlock.block.colour })
-            newBoard = Board(data: newData, fallingPiece: newBlock)
+    /// Applies non-user inputted behaviour such as dropping a piece to the next line, deleting full lines, spawning new pieces.
+    private func tick() {
+        // If there's no piece in play then spawn another if we're allowed
+        if board.fallingPiece == nil {
+            attemptNewBlockSpawn()
+            return
         }
         
-        board = newBoard
+        // We haven't attempted to spawn a new block, see if we can move the board down
+        let gameSpeed: Double = 0.25
+        if time - lastMoveTime >= gameSpeed {
+            var newBoard: Board
+            if !board.completeLineRanges.isEmpty {
+                newBoard = board.clearingLines()
+                increaseScoreUsingLineRanges(board.completeLineRanges)
+            } else {
+                newBoard = board.movingLatestPiece(direction: .down)
+                // We need to check if a piece is still moving
+                if newBoard == board {
+                    // couldn't move the piece, so replace board with newboard without in play piece
+                    newBoard = Board(data: newBoard.data, fallingPiece: nil)
+                }
+            }
+            lastMoveTime = time
+            board = newBoard
+        }
+        
     }
+    
+    private func attemptNewBlockSpawn() {
+        print("Attempting to spawn new block")
+        let blockToSpawn = Block.allCases.shuffled().first!
+        if canSpawnNewBlock(blockToSpawn, in: board) {
+            // Spawn it
+            let newBlock = InPlayBlock(block: blockToSpawn,
+                                       coords: blockToSpawn.spawnCoordinates,
+                                       boundingBox: blockToSpawn.initialBoundingBox)
+            var newData = board.data
+            newBlock.coords.forEach({ newData[$0.y][$0.x] = newBlock.block.colour })
+            board = Board(data: newData, fallingPiece: newBlock)
+            lastMoveTime = time
+        } else {
+            gameIsOver = true
+        }
+    }
+    
+    private func canSpawnNewBlock(_ block: Block, in board: Board) -> Bool {
+        let allBlocks = board.populatedCoords
+        for coord in block.spawnCoordinates {
+            if allBlocks.contains(coord) {
+                return false
+            }
+        }
+        return true
+    }
+
+    private func increaseScoreUsingLineRanges(_ ranges: [ClosedRange<Int>]) {
+        for r in ranges {
+            switch r.count {
+            case 1: score += 100 * level
+            case 2: score += 300 * level
+            case 3: score += 500 * level
+            case 4: score += 800 * level
+            default: break
+            }
+        }
+    }
+    
 }
 
 struct ContentView_Previews: PreviewProvider {

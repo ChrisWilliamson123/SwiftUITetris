@@ -122,6 +122,30 @@ extension Board {
     }
 }
 
+// MARK: - Line clearing
+extension Board {
+    func clearingLines() -> Board {
+        var postLineRemovalData = data
+        // Go through the ranges and remove the lines
+        for r in completeLineRanges {
+            for y in r {
+                postLineRemovalData[y] = Array(repeating: nil, count: postLineRemovalData[y].count)
+            }
+            // Now need to move all lines before range down
+            // Can first build up an array of data which should fill the gap AND above
+            var newData = Array(postLineRemovalData[0..<r.lowerBound])
+            while newData.count != r.upperBound+1 {
+                newData.insert(Array(repeating: nil, count: data[0].count), at: 0)
+            }
+            if r.upperBound < data.count - 1 {
+                newData += postLineRemovalData[r.upperBound+1...data.count-1]
+            }
+            postLineRemovalData = newData
+        }
+        return Board(data: postLineRemovalData, fallingPiece: nil)
+    }
+}
+
 // MARK: - Line Clearing
 //extension Board {
 //    func deletingLines(_ lines: Set<Int>) -> Board {
